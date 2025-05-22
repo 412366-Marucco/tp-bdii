@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: tp-bdii-backend
+    env: java
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/*.jar
+    plan: free
+    envVars:
+      - key: SPRING_DATA_MONGODB_URI
+        value: mongodb+srv://ignaciomarucco:admin123@bdii.xkxwf7i.mongodb.net/tpbdii?retryWrites=true&w=majority&authSource=admin&appName=BDII
