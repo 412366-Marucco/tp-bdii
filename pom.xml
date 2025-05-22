@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.6</version>
+		<version>3.2.5</version>
 		<relativePath/>
 	</parent>
 
@@ -24,10 +24,16 @@
 	</properties>
 
 	<dependencies>
-		<!-- Spring Boot Web -->
+		<!-- Web -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!-- MongoDB -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
 
 		<!-- Devtools -->
@@ -42,7 +48,8 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
+			<version>1.18.28</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- JWT -->
@@ -80,7 +87,7 @@
 
 	<build>
 		<plugins>
-			<!-- Compilador Java -->
+			<!-- Java Compiler -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -99,18 +106,10 @@
 				</configuration>
 			</plugin>
 
-			<!-- Spring Boot build -->
+			<!-- Spring Boot Plugin -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
