@@ -23,6 +23,9 @@ public class UserServiceImpl implements UserService {
         user.setEmail(request.getEmail());
         user.setPassword(encoder.encode(request.getPassword()));
 
+        // Asignar "USER" por defecto
+        user.setRole("USER");
+
         return userRepository.save(user); // ✅ guarda en Mongo Atlas
     }
 

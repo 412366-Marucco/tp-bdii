@@ -1,12 +1,11 @@
 package utn.frc.tp_bdii.filters;
 
-
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import utn.frc.tp_bdii.services.JwtService;
 
@@ -31,7 +30,12 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = authHeader.substring(7);
             try {
                 String username = jwtService.extractUsername(token);
-                request.setAttribute("username", username); // lo usás después si querés
+                Claims claims = jwtService.extractAllClaims(token);
+                String role = claims.get("role", String.class);
+
+                request.setAttribute("username", username);
+                request.setAttribute("role", role);
+
             } catch (JwtException e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
