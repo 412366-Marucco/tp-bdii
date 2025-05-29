@@ -84,23 +84,28 @@ public class UserController {
     }
 
 
-    @PostMapping("/friend-invite/{username}")
+    @PostMapping("friend-invite/{username}")
     public void sendFriendRequest( @PathVariable("username") String invitedUsername, HttpServletRequest request){
         User inviter = userService.findByUsername((String) request.getAttribute("username"));
         User invited = userService.findByUsername(invitedUsername);
         userService.sendFriendRequest(inviter.getId(),invited.getId());
     }
-    @PostMapping("/friend-accept/{username}")
+    @PostMapping("friend-accept/{username}")
     public void acceptFriendRequest( @PathVariable("username") String inviterUsername, HttpServletRequest request){
         User accepter = userService.findByUsername((String) request.getAttribute("username"));
         User inviter = userService.findByUsername(inviterUsername);
         userService.acceptFriendRequest(accepter.getId(),inviter.getId());
     }
-    @PostMapping("/friend-reject/{username}")
+    @PostMapping("friend-reject/{username}")
     public void rejectFriendRequest( @PathVariable("username") String inviterUsername, HttpServletRequest request){
         User rejecter = userService.findByUsername((String) request.getAttribute("username"));
         User inviter = userService.findByUsername(inviterUsername);
         userService.rejectFriendRequest(rejecter.getId(),inviter.getId());
+    }
+    @GetMapping("friends")
+    public List<User> getFriends(HttpServletRequest request){
+        User user = userService.findByUsername((String) request.getAttribute("username"));
+        return userService.getFriends(user.getId());
     }
 
 

@@ -8,6 +8,7 @@ import utn.frc.tp_bdii.models.User;
 import utn.frc.tp_bdii.repositories.UserRepository;
 import utn.frc.tp_bdii.services.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +42,12 @@ public class UserServiceImpl implements UserService {
     public void sendFriendRequest(String fromId, String toId) {
         Optional<User> opt1 = userRepository.findById(fromId);
         User sendingUser = opt1.get();
-        sendingUser.getFriends().add(toId);
+        List<String> friends = sendingUser.getFriends();
+        if(friends == null){
+            friends = new ArrayList<>();
+        }
+        friends.add(toId);
+        sendingUser.setFriends(friends);
         userRepository.save(sendingUser);
 
     }
@@ -51,7 +57,12 @@ public class UserServiceImpl implements UserService {
         if(getFriendRequests(accepterId).contains(userRepository.findById(inviterId).get())){
             Optional<User> opt =userRepository.findById(accepterId);
             User acceptingUser = opt.get();
-            acceptingUser.getFriends().add(inviterId);
+            List<String> friends = acceptingUser.getFriends();
+            if(friends == null){
+                friends = new ArrayList<>();
+            }
+
+            acceptingUser.setFriends(friends);
             userRepository.save(acceptingUser);
         }
 
@@ -62,20 +73,26 @@ public class UserServiceImpl implements UserService {
         if(getFriendRequests(rejecterId).contains(userRepository.findById(inviterId).get())){
             Optional<User> opt =userRepository.findById(inviterId);
             User invitingUser = opt.get();
-            invitingUser.getFriends().remove(inviterId);
+            List<String> friends = invitingUser.getFriends();
+            if(friends == null){
+                friends = new ArrayList<>();
+            }
+
+            invitingUser.setFriends(friends);
             userRepository.save(invitingUser);
         }
     }
 
     @Override
     public List<User> getFriendRequests(String userId) {
-        return userRepository.findAll().stream().filter(u -> u.getFriends().contains(userId)).toList();
+        return userRepository.findAll().stream().filter(u ->
+                u.getFriends() != null && u.getFriends().contains(userId)).toList();
     }
 
     @Override
     public List<User> getFriends(String userId) {
-        return userRepository.findAll().stream().filter( u -> u.getFriends().contains(userId)).toList();
+        return userRepository.findAll().stream().filter( u ->
+                u.getFriends() != null &&
+                u.getFriends().contains(userId)).toList();
     }
-
-
 }
