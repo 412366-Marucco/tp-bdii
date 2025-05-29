@@ -25,4 +25,6 @@ public class User {
     private List<String> favorites = new ArrayList<>();
     private List<String> watchlist = new ArrayList<>();
     private List<Rating> ratings = new ArrayList<>();
+
+    private List<String> friends = new ArrayList<>();
 }

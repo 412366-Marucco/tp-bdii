@@ -79,4 +79,9 @@ public class UserController {
 
         return ResponseEntity.ok(user.getRatings());
     }
+
+    @PostMapping("/friend-request/{id}")
+    public ResponseEntity<Boolean> sendFriendRequest(@PathVariable("id") String userId){
+
+    }
 }
