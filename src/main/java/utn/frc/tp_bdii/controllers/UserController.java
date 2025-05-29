@@ -107,6 +107,12 @@ public class UserController {
         User user = userService.findByUsername((String) request.getAttribute("username"));
         return userService.getFriends(user.getId());
     }
+    @DeleteMapping("friends/{username}")
+    public void removeFriend(@PathVariable("username") String deletedUsername,HttpServletRequest request){
+        User user = userService.findByUsername( (String) request.getAttribute("username"));
+        User deletedUser = userService.findByUsername(deletedUsername);
+        userService.removeFriend(user.getId(), deletedUser.getId());
+    }
 
 
 }
