@@ -8,6 +8,7 @@ import utn.frc.tp_bdii.models.Rating;
 import utn.frc.tp_bdii.models.User;
 import utn.frc.tp_bdii.repositories.UserRepository;
 import utn.frc.tp_bdii.services.MovieService;
+import utn.frc.tp_bdii.services.UserService;
 
 import java.util.*;
 
@@ -20,6 +21,8 @@ public class UserController {
 
     @Autowired
     private MovieService movieService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/me")
     public ResponseEntity<User> me(HttpServletRequest request) {
@@ -80,8 +83,25 @@ public class UserController {
         return ResponseEntity.ok(user.getRatings());
     }
 
-    @PostMapping("/friend-request/{id}")
-    public ResponseEntity<Boolean> sendFriendRequest(@PathVariable("id") String userId){
 
+    @PostMapping("/friend-invite/{username}")
+    public void sendFriendRequest( @PathVariable("username") String invitedUsername, HttpServletRequest request){
+        User inviter = userService.findByUsername((String) request.getAttribute("username"));
+        User invited = userService.findByUsername(invitedUsername);
+        userService.sendFriendRequest(inviter.getId(),invited.getId());
     }
+    @PostMapping("/friend-accept/{username}")
+    public void acceptFriendRequest( @PathVariable("username") String inviterUsername, HttpServletRequest request){
+        User accepter = userService.findByUsername((String) request.getAttribute("username"));
+        User inviter = userService.findByUsername(inviterUsername);
+        userService.acceptFriendRequest(accepter.getId(),inviter.getId());
+    }
+    @PostMapping("/friend-reject/{username}")
+    public void rejectFriendRequest( @PathVariable("username") String inviterUsername, HttpServletRequest request){
+        User rejecter = userService.findByUsername((String) request.getAttribute("username"));
+        User inviter = userService.findByUsername(inviterUsername);
+        userService.rejectFriendRequest(rejecter.getId(),inviter.getId());
+    }
+
+
 }
