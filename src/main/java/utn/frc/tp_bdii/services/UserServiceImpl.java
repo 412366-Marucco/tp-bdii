@@ -62,6 +62,7 @@ public class UserServiceImpl implements UserService {
             if(friends == null){
                 friends = new ArrayList<>();
             }
+            friends.add(inviterId);
 
             acceptingUser.setFriends(friends);
             userRepository.save(acceptingUser);
@@ -78,10 +79,28 @@ public class UserServiceImpl implements UserService {
             if(friends == null){
                 friends = new ArrayList<>();
             }
+            friends.remove(rejecterId);
 
             invitingUser.setFriends(friends);
             userRepository.save(invitingUser);
         }
+    }
+
+    @Override
+    public void removeFriend(String removerId, String removedId) {
+        User remover = userRepository.findById(removerId).get();
+        User removed = userRepository.findById(removedId).get();
+        if(removed.getFriends() != null && remover.getFriends() != null){
+            List<String> removedFriends = removed.getFriends();
+            List<String> removerFriends = remover.getFriends();
+            removedFriends.remove(removerId);
+            removerFriends.remove(removedId);
+            remover.setFriends(removerFriends);
+            removed.setFriends(removedFriends);
+            userRepository.save(remover);
+            userRepository.save(removed);
+        }
+
     }
 
     @Override
@@ -96,4 +115,6 @@ public class UserServiceImpl implements UserService {
                 u.getFriends() != null &&
                 u.getFriends().contains(userId)).toList();
     }
+
+
 }

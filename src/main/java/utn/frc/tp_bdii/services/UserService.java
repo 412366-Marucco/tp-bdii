@@ -11,6 +11,7 @@ public interface UserService {
     void sendFriendRequest(String fromId, String toId);
     void acceptFriendRequest(String accepterId, String inviterId);
     void rejectFriendRequest(String rejecterId, String inviterId);
+    void removeFriend(String removerId, String removedId);
     List<User> getFriendRequests(String userId);
     List<User> getFriends(String userId);
 }
