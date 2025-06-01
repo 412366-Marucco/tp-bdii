@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
 
         // Asignar "USER" por defecto
         user.setRole("USER");
+        user.setCountry(request.getCountry());
 
         return userRepository.save(user); // ✅ guarda en Mongo Atlas
     }

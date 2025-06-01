@@ -19,6 +19,8 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private String country;
+
 
     private String role = "USER";
 
