@@ -8,6 +8,7 @@ import utn.frc.tp_bdii.models.MovieList;
 import utn.frc.tp_bdii.repositories.MovieListRepository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -35,9 +36,27 @@ public class MovieListService {
     }
 
     public List<MovieListDTO> getMostLiked(){
-        List<MovieListDTO> unsortedList = new java.util.ArrayList<>(movieListRepository.findAll().stream().map(this::toDTO).toList());
-        unsortedList.sort( (ml1,ml2) -> ml2.getUsersLikes().size() - ml1.getUsersLikes().size());
-        return unsortedList.subList(0,20);
+        List<MovieListDTO> list = new java.util.ArrayList<>(movieListRepository.findAll().stream().map(this::toDTO).toList());
+        list.sort( (ml1,ml2) -> ml2.getUsersLikes().size() - ml1.getUsersLikes().size());
+        return list.stream().limit(20).toList();
+    }
+    public List<MovieListDTO> getByName(String query){
+        List<MovieListDTO> list = new java.util.ArrayList<>(movieListRepository.findAll().stream()
+                .filter(ml -> ml.getName().contains(query))
+                .map(this::toDTO).toList());
+        list.sort( (ml1,ml2) -> ml2.getUsersLikes().size() - ml1.getUsersLikes().size());
+        return list.stream().limit(20).toList();
+    }
+    public void likeMovieList(String listId, String userId){
+        MovieList list = getById(listId);
+        List<String> likes = list.getUsersLikes();
+        if(likes == null) likes = new ArrayList<>();
+        likes.add(userId);
+        list.setUsersLikes(likes);
+        movieListRepository.save(list);
+    }
+    public MovieList getById(String id){
+        return movieListRepository.findById(id).get();
     }
     public MovieList toEntity(MovieListDTO dto){
         return MovieList.builder()

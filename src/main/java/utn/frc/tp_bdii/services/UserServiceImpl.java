@@ -105,15 +105,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getFriendRequests(String userId) {
+        List<User> friends = getFriends(userId);
         return userRepository.findAll().stream().filter(u ->
-                u.getFriends() != null && u.getFriends().contains(userId)).toList();
+                u.getFriends() != null && u.getFriends().contains(userId)
+                && !friends.contains(u)
+        ).toList();
     }
 
     @Override
     public List<User> getFriends(String userId) {
+        User user = userRepository.findById(userId).get();
         return userRepository.findAll().stream().filter( u ->
                 u.getFriends() != null &&
-                u.getFriends().contains(userId)).toList();
+                u.getFriends().contains(userId)
+        && user.getFriends().contains(u.getId())
+                ).toList();
     }
 
 

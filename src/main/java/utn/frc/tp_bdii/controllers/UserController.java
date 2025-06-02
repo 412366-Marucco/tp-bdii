@@ -34,6 +34,16 @@ public class UserController {
 
         return ResponseEntity.ok(user);
     }
+    @GetMapping("profile")
+    public ResponseEntity<User> currentProfile(HttpServletRequest request) {
+        String username = (String) request.getAttribute("username");
+
+
+        User user = userRepository.findByUsername(username);
+
+
+        return ResponseEntity.ok(user);
+    }
 
 
     @PostMapping("/favorite")
@@ -82,6 +92,13 @@ public class UserController {
 
         return ResponseEntity.ok(user.getRatings());
     }
+    @GetMapping("{id}")
+    public ResponseEntity<User> getUserById( @PathVariable("id") String id) {
+
+        User user = userRepository.findById(id).get();
+
+        return ResponseEntity.ok(user);
+    }
 
 
     @PostMapping("friend-invite/{username}")
@@ -106,6 +123,11 @@ public class UserController {
     public List<User> getFriends(HttpServletRequest request){
         User user = userService.findByUsername((String) request.getAttribute("username"));
         return userService.getFriends(user.getId());
+    }
+    @GetMapping("friend-requests")
+    public List<User> getFriendRequests(HttpServletRequest request){
+        User user = userService.findByUsername((String) request.getAttribute("username"));
+        return userService.getFriendRequests(user.getId());
     }
     @DeleteMapping("friends/{username}")
     public void removeFriend(@PathVariable("username") String deletedUsername,HttpServletRequest request){
