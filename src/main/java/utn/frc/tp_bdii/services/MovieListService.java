@@ -9,7 +9,9 @@ import utn.frc.tp_bdii.repositories.MovieListRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class MovieListService {
@@ -49,10 +51,10 @@ public class MovieListService {
     }
     public void likeMovieList(String listId, String userId){
         MovieList list = getById(listId);
-        List<String> likes = list.getUsersLikes();
-        if(likes == null) likes = new ArrayList<>();
+        Set<String> likes = new HashSet<>(list.getUsersLikes()) ;
+        if(likes == null) likes = new HashSet<>();
         likes.add(userId);
-        list.setUsersLikes(likes);
+        list.setUsersLikes(List.copyOf(likes));
         movieListRepository.save(list);
     }
     public MovieList getById(String id){

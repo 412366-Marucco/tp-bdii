@@ -92,6 +92,31 @@ public class UserController {
 
         return ResponseEntity.ok(user.getRatings());
     }
+    @GetMapping("{id}/favorites")
+    public ResponseEntity<List<String>> getFavoritesById(@PathVariable("id") String userId) {
+
+        User user = userRepository.findById(userId).get();
+
+        List<String> movieDetails = new ArrayList<>();
+        for (String id : user.getFavorites()) {
+            movieDetails.add(movieService.getMovieById(id));
+        }
+
+        return ResponseEntity.ok(movieDetails);
+    }
+
+    @GetMapping("{id}/ratings")
+    public ResponseEntity<List<Rating>> getRatingsById(@PathVariable("id") String userId) {
+
+        User user = userRepository.findById(userId).get();
+
+        return ResponseEntity.ok(user.getRatings());
+    }
+    @GetMapping("{id}/friends")
+    public List<User> getFriendsById(@PathVariable("id") String userId){
+        User user = userRepository.findById(userId).get();
+        return userService.getFriends(user.getId());
+    }
     @GetMapping("{id}")
     public ResponseEntity<User> getUserById( @PathVariable("id") String id) {
 
