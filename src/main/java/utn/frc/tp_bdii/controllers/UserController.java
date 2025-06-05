@@ -162,4 +162,38 @@ public class UserController {
     }
 
 
+    @DeleteMapping("/favorite/{movieId}")
+    public ResponseEntity<?> removeFavorite(HttpServletRequest request, @PathVariable("movieId") String movieId) {
+        String username = (String) request.getAttribute("username");
+        User user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.status(404).body("Usuario no encontrado");
+        }
+
+        List<String> favorites = user.getFavorites();
+        if (favorites == null) {
+            return ResponseEntity.status(404).body("No hay favoritos para este usuario");
+        }
+
+        // Limpiar movieId (quitar espacios)
+        String cleanedMovieId = movieId.trim();
+
+        System.out.println("Favoritos antes: " + favorites);
+        System.out.println("Intentando eliminar movieId: '" + cleanedMovieId + "'");
+
+        boolean removed = favorites.removeIf(fav -> fav.equals(cleanedMovieId));
+
+        if (removed) {
+            userRepository.save(user);
+            System.out.println("Favoritos después: " + favorites);
+            return ResponseEntity.ok("Película eliminada de favoritos");
+        } else {
+            System.out.println("No se encontró el movieId en favoritos");
+            return ResponseEntity.status(404).body("La película no estaba en favoritos");
+        }
+    }
+
+
+
 }
