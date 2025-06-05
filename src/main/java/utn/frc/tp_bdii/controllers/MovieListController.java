@@ -38,6 +38,13 @@ public class MovieListController {
 
         return ResponseEntity.ok(movieListService.getByUser(user.getId()));
     }
+    @GetMapping("movie-lists/{id}")
+    public ResponseEntity<List<MovieListDTO>> getByUserId(@PathVariable("id") String userId){
+
+        User user = userRepository.findById(userId).get();
+
+        return ResponseEntity.ok(movieListService.getByUser(user.getId()));
+    }
     @GetMapping("movie-lists/search")
     public ResponseEntity<List<MovieListDTO>> getByName(@RequestParam String query){
         return ResponseEntity.ok(movieListService.getByName(query));
@@ -47,7 +54,10 @@ public class MovieListController {
         return ResponseEntity.ok(movieListService.getMostLiked());
     }
     @PostMapping("movie-lists")
-    public void add(@RequestBody MovieListDTO movieListDTO){
+    public void add(@RequestBody MovieListDTO movieListDTO, HttpServletRequest request){
+        String username = (String) request.getAttribute("username");
+        User user = userRepository.findByUsername(username);
+        movieListDTO.setOwnerId(user.getId());
         movieListService.add(movieListDTO);
     }
 

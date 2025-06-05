@@ -20,6 +20,7 @@ public class MovieListService {
     public MovieListService(MovieListRepository repository){
         this.movieListRepository = repository;
     }
+
     public void add(MovieListDTO movieListDTO){
         movieListDTO.setPostDate(LocalDateTime.now());
         movieListRepository.save(toEntity(movieListDTO));
