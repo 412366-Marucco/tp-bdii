@@ -31,6 +31,7 @@ public class MovieListController {
 
         return ResponseEntity.ok(movieListService.getByUser(user.getId()));
     }
+    /*
     @GetMapping("movie-lists/{username}")
     public ResponseEntity<List<MovieListDTO>> getByUser(@PathVariable("username") String username){
 
@@ -38,6 +39,8 @@ public class MovieListController {
 
         return ResponseEntity.ok(movieListService.getByUser(user.getId()));
     }
+    
+     */
     @GetMapping("movie-lists/{id}")
     public ResponseEntity<List<MovieListDTO>> getByUserId(@PathVariable("id") String userId){
 
