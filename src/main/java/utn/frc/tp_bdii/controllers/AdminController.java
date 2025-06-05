@@ -8,6 +8,7 @@ import utn.frc.tp_bdii.models.Rating;
 import utn.frc.tp_bdii.models.User;
 import utn.frc.tp_bdii.repositories.UserRepository;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -151,6 +152,82 @@ public class AdminController {
                 .toList();
 
         return ResponseEntity.ok(result);
+    }
+
+
+    @GetMapping("/top-critics")
+    public ResponseEntity<?> getTopCritics(HttpServletRequest request,
+                                           @RequestParam(defaultValue = "10") int limit) {
+        if (!isAdmin(request)) return ResponseEntity.status(403).body("No autorizado");
+
+        List<Map<String, Object>> topCritics = userRepository.findAll().stream()
+                .filter(u -> u.getRatings() != null && !u.getRatings().isEmpty())
+                .map(u -> {
+                    double avg = u.getRatings().stream()
+                            .mapToInt(r -> r.getScore())
+                            .average()
+                            .orElse(0.0);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("username", u.getUsername());
+                    map.put("average", avg);
+                    map.put("ratingsCount", u.getRatings().size());
+                    return map;
+                })
+                .sorted((a, b) -> Double.compare((double) b.get("average"), (double) a.get("average")))
+                .limit(limit)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(topCritics);
+    }
+
+
+    @GetMapping("/country-ranking")
+    public ResponseEntity<?> getRankingByCountry(
+            @RequestParam(name = "country", required = false) String countryParam,
+            HttpServletRequest request) {
+
+        if (!isAdmin(request)) return ResponseEntity.status(403).body("No autorizado");
+
+        // Maps para acumular datos de todos los usuarios (igual que antes)
+        Map<String, Set<String>> countryToMovies = new HashMap<>();
+        Map<String, Map<String, Integer>> countryMovieCount = new HashMap<>();
+
+        for (User user : userRepository.findAll()) {
+            String country = user.getCountry();
+            if (country == null || country.isEmpty()) continue;
+
+            for (Rating rating : user.getRatings()) {
+                String movieId = rating.getMovieId();
+
+                countryToMovies.computeIfAbsent(country, k -> new HashSet<>()).add(movieId);
+                countryMovieCount.computeIfAbsent(country, k -> new HashMap<>())
+                        .merge(movieId, 1, Integer::sum);
+            }
+        }
+
+        if (countryParam != null && !countryParam.isEmpty()) {
+            // Filtrar solo el país solicitado
+            if (!countryToMovies.containsKey(countryParam)) {
+                // País no encontrado
+                return ResponseEntity.status(404).body("País no encontrado");
+            }
+            Map<String, Object> map = new HashMap<>();
+            map.put("country", countryParam);
+            map.put("uniqueMoviesRated", countryToMovies.get(countryParam).size());
+
+            List<Map<String, ? extends Serializable>> topMovies = countryMovieCount.get(countryParam).entrySet().stream()
+                    .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                    .limit(3)
+                    .map(e -> Map.of("movieId", e.getKey(), "votes", e.getValue()))
+                    .collect(Collectors.toList());
+
+            map.put("topMovies", topMovies);
+
+            return ResponseEntity.ok(List.of(map)); // Devuelve lista con 1 solo país para que el frontend no cambie mucho
+        }
+
+        // Si no se pasa país, devolver error o lista vacía (según decidas)
+        return ResponseEntity.badRequest().body("Debe especificar parámetro 'country'");
     }
 
 

@@ -19,10 +19,14 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private String country;
+
 
     private String role = "USER";
 
     private List<String> favorites = new ArrayList<>();
     private List<String> watchlist = new ArrayList<>();
     private List<Rating> ratings = new ArrayList<>();
+
+    private List<String> friends = new ArrayList<>();
 }
